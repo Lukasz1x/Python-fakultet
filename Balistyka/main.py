@@ -4,7 +4,7 @@ from time import sleep
 import os
 
 GRAVITY = 9.81
-DISTANCE = 40
+DISTANCE = 100
 RADIUS = 0.3
 ROWS = 24
 COLS = 80
@@ -55,7 +55,7 @@ def draw_scene_adjusted(x, y):
     draw_scene(int(new_x), int(new_y))
 
 def clear():
-    os.system("clear")
+    os.system("cls") # clear na linux
 
 def animated_shot(velocity, angle):
     t=0

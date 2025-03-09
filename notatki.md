@@ -1,12 +1,25 @@
 # Spis Treści
+## Podstawy Pythona
 1. [Podstawowe elementy składni w Pythonie](#podstawowe-elementy-składni-w-pythonie)
 2. [Typy danych i zmienne w Pythonie](#typy-danych-i-zmienne-w-pythonie)
 3. [Operatory w Pythonie](#operatory-w-pythonie)
 4. [Struktury sterujące w Pythonie](#struktury-sterujące-w-pythonie)
 5. [Funkcje w Pythonie](#funkcje-w-pythonie)
 6. [Struktury danych w Pythonie](#struktury-danych-w-pythonie)
-7. [Operacje wejścia/wyjścia otaz obsługa plików w Pythonie](#operacje-wejściawyjścia-otaz-obsługa-plików-w-pythonie)
+7. [Operacje wejścia/wyjścia oraz obsługa plików w Pythonie](#operacje-wejściawyjścia-oraz-obsługa-plików-w-pythonie)
 8. [Moduły i importy w Pythonie](#moduły-i-importy-w-pythonie)
+
+## Curses w Pyhonie
+1. [Wprowadzenie do curses](#wprowadzenie-do-curses)
+2. [Podstawowe użycie](#podstawowe-użycie)
+3. [Obsługa klawiatury w curses](#obsługa-klawiatury-w-curses)
+4. [Kolory w curses](#kolory-w-curses)
+5. [Obsługa myszy w curses](#obsługa-myszy-w-curses)
+
+
+
+
+<h1 align="center" span style="color: lime">Podstawy Pythona</h1>
 
 # Podstawowe elementy składni w Pythonie
 
@@ -439,7 +452,7 @@ Iteracja po słowniku
 for klucz, wartosc in osoba.items():
     print(f"{klucz}: {wartosc}")
 ```
-# Operacje wejścia/wyjścia otaz obsługa plików w Pythonie
+# Operacje wejścia/wyjścia oraz obsługa plików w Pythonie
 Operacje wejścia (input) i wyjścia (output) są kluczowe w programowaniu – pozwalają na interakcję użytkownika z programem oraz zapis i odczyt danych.
 
 ### Odczyt danych od użytkownika (`input()`)
@@ -625,3 +638,174 @@ import random
 print(random.randint(1, 10))            # Losowa liczba 1-10
 print(random.choice(["A", "B", "C"]))   # Losowy element listy
 ```
+
+
+<h1 align="center" span style="color: lime">Curses w Pyhonie</h1>
+
+
+
+# Wprowadzenie do `curses`
+Moduł `curses` jest biblioteką do tworzenia interfejsów tekstowych w terminalu. Umożliwia dynamiczne odświeżanie ekranu, obsługę klawiatury, pracę z kolorami oraz tworzenie okien i ramek. `curses` jest często wykorzystywany w aplikacjach konsolowych, takich jak gry roguelike, menedżery plików czy interaktywne narzędzia terminalowe.
+
+📌 Kluczowe cechy `curses`:\
+✔️ Praca w trybie pełnoekranowym w terminalu\
+✔️ Obsługa dynamicznych zmian wyświetlania\
+✔️ Możliwość używania kolorów i stylów tekstu\
+✔️ Obsługa różnych urządzeń wejściowych, w tym klawiatury
+
+# Podstawowe użycie
+Minimalny przykład uruchomienia `curses`
+```py
+import curses
+
+def main(stdscr):
+    stdscr.clear()
+    stdscr.addstr(0, 0, "Witaj w curses!")
+
+    # Przykład jak wycentrować tekst na ekranie
+    height, width = stdscr.getmaxyx()                           # Pobranie rozmiaru terminala
+    msg = "Rozmiar terminala: {}x{}".format(height, width)
+    stdscr.addstr(height // 2, (width - len(msg)) // 2, msg)    # Wycentrowanie tekstu
+    
+    stdscr.refresh()
+    stdscr.getch()
+
+if __name__ == '__main__':
+    curses.wrapper(main)
+```
+Opis działania:
+- `stdscr` - główne okno ekranu
+- `stdscr.clear()` - usuwa wcześniejsze rysunki, zapobiegając nakładaniu znaków
+- `stdscr.addstr(y, x, "tekst")` – wyświetlenie tekstu na ekranie
+- `stdscr.refresh()` – odświeżenie ekranu po zmianach
+- `stdscr.getch()` – czeka na naciśnięcie klawisza przed zakończeniem
+- `curses.wrapper(main)` - Funkcja `wrapper()` zapewnia poprawne uruchomienie `curses` i automatycznie resetuje terminal po zakończeniu programu. Dzięki temu unikamy problemów z pozostawieniem terminala w trybie `curses` po wystąpieniu błędu.    
+- `stdscr.getmaxyx()` - zwraca wymiary terminala 
+
+# Obsługa klawiatury w `curses`
+Moduł `curses` pozwala na odczyt klawiatury przy użyciu `getch()`. Możemy obsługiwać zarówno standardowe znaki ASCII, jak i specjalne klawisze.
+
+### Podstawowy odczyt klawiszy
+```py
+import curses
+
+def main(stdscr):
+    stdscr.addstr(0, 0, "Naciśnij klawisz (q aby wyjść)")
+    while True:
+        key = stdscr.getch()    # Odczytaj naciśnięty klawisz
+        if key == ord('q'):     # Sprawdź, czy to 'q'
+            break
+        stdscr.addstr(1, 0, f"Naciśnięto: {chr(key)}    ")
+        stdscr.refresh()
+
+if __name__ == '__main__':
+    curses.wrapper(main)
+```
+`ord('q')` zwraca kod ASCII litery 'q', dzięki czemu porównujemy bezpośrednio wartość liczbową.
+
+### Obsługa specjalnych klawiszy (np. strzałek)
+`curses` posiada stałe wartości dla klawiszy specjalnych, np. `curses.KEY_UP`, `curses.KEY_DOWN`.
+```py
+import curses
+
+def main(stdscr):
+    stdscr.addstr(0, 0, "Użyj strzałek do poruszania się, 'q' aby wyjść")
+    y, x = 2, 5  # Początkowa pozycja
+    while True:
+        key = stdscr.getch()
+        if key == ord('q'):
+            break
+        elif key == curses.KEY_UP:
+            y = max(1, y - 1)
+        elif key == curses.KEY_DOWN:
+            y = min(10, y + 1)
+        elif key == curses.KEY_LEFT:
+            x = max(1, x - 1)
+        elif key == curses.KEY_RIGHT:
+            x = min(30, x + 1)
+        stdscr.clear()
+        stdscr.addstr(y, x, "@")
+        stdscr.refresh()
+
+if __name__ == '__main__':
+    curses.wrapper(main)
+```
+`curses.KEY_UP`, `curses.KEY_DOWN`, `curses.KEY_LEFT`, `curses.KEY_RIGHT` – stałe dla klawiszy kierunkowych.
+# Kolory w `curses`
+Domyślnie terminal obsługuje tylko biały tekst na czarnym tle, ale `curses` pozwala na definiowanie kolorów.
+### Inicjalizacja kolorów
+Przed użyciem kolorów należy wywołać curses.start_color(), a potem zdefiniować pary kolorów.
+
+```py
+import curses
+
+def main(stdscr):
+    curses.start_color()
+    curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+
+    stdscr.addstr(0, 0, "Czerwony tekst", curses.color_pair(1))
+    stdscr.addstr(1, 0, "Zielony tekst", curses.color_pair(2))
+    stdscr.refresh()
+    stdscr.getch()
+
+if __name__ == '__main__':
+    curses.wrapper(main)
+```
+`curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)` - definiuje kolor tekstu i tła.\
+`curses.color_pair(1)` – wybiera wcześniej zdefiniowaną parę kolorów.
+
+# Obsługa myszy w `curses`
+Moduł `curses` pozwala na obsługę myszy, w tym wykrywanie kliknięć, przewijania oraz ruchu kursora. Do tego celu wykorzystuje funkcję `curses.mousemask()`, która określa, jakie zdarzenia myszy mają być rejestrowane.
+
+***Konfiguracja obsługi myszy***\
+Aby włączyć obsługę myszy, należy:
+- Ukryć kursor – `curses.curs_set(0)`, aby nie przeszkadzał w interfejsie.
+- Włączyć obsługę myszy – `curses.mousemask(curses.ALL_MOUSE_EVENTS | curses.REPORT_MOUSE_POSITION)`, aby rejestrować kliknięcia i ruch.
+- Odczytać zdarzenia – `curses.getch()` + `curses.getmouse()` w celu przechwycenia interakcji.
+
+### Rejestrowanie kliknięć myszy
+Poniższy program wyświetla koordynaty kliknięcia w terminalu.
+```py
+import curses
+
+def main(stdscr):
+    curses.curs_set(0)  # Ukrycie kursora
+    curses.mousemask(curses.ALL_MOUSE_EVENTS | curses.REPORT_MOUSE_POSITION)  # Rejestrowanie wszystkich zdarzeń myszy
+
+    stdscr.addstr(0, 0, "Kliknij gdziekolwiek myszką (q aby wyjść)")
+
+    while True:
+        key = stdscr.getch()
+        
+        if key == ord('q'):
+            break  # Wyjście po naciśnięciu 'q'
+        
+        if key == curses.KEY_MOUSE:  # Sprawdzenie, czy zdarzenie dotyczy myszy
+            _, x, y, _, bstate = curses.getmouse()  # Pobranie informacji o kliknięciu
+            
+            stdscr.clear()
+            stdscr.addstr(0, 0, "Kliknij gdziekolwiek myszką (q aby wyjść)")
+            stdscr.addstr(y, x, "X")  # Rysowanie znaku na pozycji kliknięcia
+
+            # Sprawdzenie typu kliknięcia
+            if bstate & curses.BUTTON1_PRESSED:
+                stdscr.addstr(2, 0, f"LPM kliknięte na ({x}, {y})")
+            if bstate & curses.BUTTON3_PRESSED:
+                stdscr.addstr(3, 0, f"PPM kliknięte na ({x}, {y})")
+            if bstate & curses.BUTTON2_PRESSED:
+                stdscr.addstr(4, 0, f"Środkowy przycisk kliknięty na ({x}, {y})")
+            if bstate & curses.BUTTON4_PRESSED:
+                stdscr.addstr(5, 0, "Scroll w górę")
+            if bstate & curses.BUTTON5_PRESSED:
+                stdscr.addstr(6, 0, "Scroll w dół")
+
+            stdscr.refresh()
+
+if __name__ == '__main__':
+    curses.wrapper(main)
+```
+`curses.KEY_MOUSE` – sprawdza, czy zdarzenie pochodzi od myszy.\
+`curses.getmouse()` – zwraca (id_kliknięcia, x, y, z, bstate), gdzie bstate określa rodzaj zdarzenia.\
+`curses.BUTTON1_PRESSED`, `BUTTON3_PRESSED`, `BUTTON4_PRESSED` itd. - pozwalają rozpoznać, który przycisk został naciśnięty.\
+`stdscr.addstr(y, x, "X")` – rysuje znak X w miejscu kliknięcia.
