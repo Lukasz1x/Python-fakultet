@@ -5,7 +5,7 @@
 4. [Struktury sterujące w Pythonie](#struktury-sterujące-w-pythonie)
 5. [Funkcje w Pythonie](#funkcje-w-pythonie)
 6. [Struktury danych w Pythonie](#struktury-danych-w-pythonie)
-7. [Obsługa plików w Pythonie](#obsługa-plików-w-pythonie)
+7. [Operacje wejścia/wyjścia otaz obsługa plików w Pythonie](#operacje-wejściawyjścia-otaz-obsługa-plików-w-pythonie)
 8. [Moduły i importy w Pythonie](#moduły-i-importy-w-pythonie)
 
 # Podstawowe elementy składni w Pythonie
@@ -439,7 +439,41 @@ Iteracja po słowniku
 for klucz, wartosc in osoba.items():
     print(f"{klucz}: {wartosc}")
 ```
-# Obsługa plików w Pythonie
+# Operacje wejścia/wyjścia otaz obsługa plików w Pythonie
+Operacje wejścia (input) i wyjścia (output) są kluczowe w programowaniu – pozwalają na interakcję użytkownika z programem oraz zapis i odczyt danych.
+
+### Odczyt danych od użytkownika (`input()`)
+
+Funkcja `input()` pozwala użytkownikowi wprowadzić dane z klawiatury. Domyślnie zwraca ciąg znaków (`str`).\
+Przykład – pobieranie imienia od użytkownika
+```py
+imie = input("Podaj swoje imię: ")
+print("Cześć,", imie)
+```
+Konwersja danych wejściowych
+Jeśli użytkownik podaje liczbę, należy przekonwertować ją na odpowiedni typ.
+```py
+wiek = int(input("Podaj swój wiek: "))      # Konwersja na int
+print("Za 5 lat będziesz miał", wiek + 5)
+```
+### Wyjście danych (`print()`)
+Funkcja `print()` pozwala wyświetlić dane na ekranie.
+```py
+print("Witaj w programie!")
+```
+### Łączenie wielu argumentów (`sep`, `end`)
+```py
+print("Imię:", "Anna", sep="-")             # Imię:-Anna
+print("Linia 1", end=" ")                   # end="" nie dodaje nowej linii
+print("Linia 2")                            # Linia 1 Linia 2
+```
+### Formatowanie ciągów znaków (`f-stringi`)
+```py
+imie = "Jan"
+wiek = 30
+print(f"{imie} ma {wiek} lat.")  # Jan ma 30 lat.
+```
+### Operacje na plikach
 Python pozwala na łatwe otwieranie, odczytywanie i zapisywanie plików. Można pracować z plikami tekstowymi (`.txt`), binarnymi (`.bin`) i innymi formatami.
 ### Otwieranie plików (`open`)
 Pliki otwieramy za pomocą funkcji `open()`, podając nazwę pliku i tryb otwarcia.
