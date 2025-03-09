@@ -28,16 +28,16 @@ def draw_map(stdscr, rows, cols, structures):
     #     stdscr.addstr(i, 0, line)
     for y, x in structures:
     #     stdscr.addstr(y, x, '*')
-        draw_structure(stdscr, y,x, barracks)
+        draw_structure(stdscr, y,x, barracks,centered = True, labeled = True, highlighted=True)
 
-def draw_structure(stdscr, y, x, structure, centered=False, labeled=False):
+def draw_structure(stdscr, y, x, structure, centered=False, labeled=False,highlighted = False):
     name, art =structure
     offset_y = y - len(art)
     offset_x = x - len(art[0])//2 if centered else x
     for i, line in enumerate(art):
         stdscr.addstr(offset_y+i, offset_x, line)
     if labeled:
-        stdscr.addstr(offset_y+len(art)+1, offset_x, name)
+        stdscr.addstr(offset_y+len(art)+1, offset_x, name, curses.color_pair(1 if highlighted else 0))
 
 def add_structure(structures, y,x, rows):
     max_y = rows - (PANEL_HEIGHT + 1)
@@ -55,6 +55,7 @@ def load_structure_from_file(path):
 barracks = load_structure_from_file('structures/barracks.txt')
 
 def main(stdscr):
+    curses.start_color()
     curses.init_pair(1, curses.COLOR_YELLOW, curses.COLOR_BLACK)
     global barracks
     curses.curs_set(0)
@@ -65,7 +66,7 @@ def main(stdscr):
     #stdscr.addstr(5, 10, f"* {height}x{width} *")
     show_title_screen(stdscr, height, width)
     stdscr.clear()
-    structures=[(3,8),(7,10),(15,20)]
+    structures=[]
     while True:
         draw_map(stdscr, height, width, structures)
         draw_separator(stdscr, height, width)
@@ -77,11 +78,7 @@ def main(stdscr):
             if bstate & curses.BUTTON1_CLICKED:
                 add_structure(structures, y,x, height)
 
-
-
-
     #stdscr.refresh()
-
 
 
 if __name__ == '__main__':
