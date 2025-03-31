@@ -8,6 +8,7 @@
 6. [Struktury danych w Pythonie](#struktury-danych-w-pythonie)
 7. [Operacje wejścia/wyjścia oraz obsługa plików w Pythonie](#operacje-wejściawyjścia-oraz-obsługa-plików-w-pythonie)
 8. [Moduły i importy w Pythonie](#moduły-i-importy-w-pythonie)
+9. [Klasy w Pythonie](#klasy-w-pythonie)
 
 ## Curses w Pyhonie
 1. [Wprowadzenie do curses](#wprowadzenie-do-curses)
@@ -16,7 +17,10 @@
 4. [Kolory w curses](#kolory-w-curses)
 5. [Obsługa myszy w curses](#obsługa-myszy-w-curses)
 
+## Linki:
 
+https://doc.qt.io/qtforpython-6/PySide6/QtWidgets/index.html#module-PySide6.QtWidgets
+ https://requests.readthedocs.io/en/latest/user/quickstart/
 
 
 <h1 align="center" span style="color: lime">Podstawy Pythona</h1>
@@ -638,6 +642,90 @@ import random
 print(random.randint(1, 10))            # Losowa liczba 1-10
 print(random.choice(["A", "B", "C"]))   # Losowy element listy
 ```
+# Klasy w Pythonie
+
+Klasy w Pythonie to podstawowy mechanizm programowania obiektowego, który pozwala na tworzenie własnych typów danych poprzez grupowanie zmiennych (atrybutów) i funkcji (metod) w jedną strukturę. Pozwalają one modelować rzeczywiste obiekty oraz ich zachowania.
+
+### Tworzenie klasy
+Klasę definiujemy za pomocą słowa kluczowego `class`
+```py
+class NazwaKlasy:
+    def __init__(self, parametr1, parametr2):
+        self.parametr1 = parametr1
+        self.parametr2 = parametr2
+
+    def metoda(self):
+        print(f"Parametry: {self.parametr1}, {self.parametr2}")
+```
+#### Kluczowe elementy klasy:
+1. Konstruktor (`__init__`)\
+Specjalna metoda, która jest wywoływana przy tworzeniu obiektu danej klasy. Służy do inicjalizacji jego atrybutów.
+
+2. Atrybuty (`self.nazwa_atrybutu`)\
+Zmienne przypisane do konkretnej instancji klasy.
+
+3. Metody (`def nazwa_metody(self)`)\
+Funkcje zdefiniowane wewnątrz klasy, które operują na jej danych.
+
+### Tworzenie obiektów klasy
+Po zdefiniowaniu klasy możemy tworzyć jej obiekty
+```py
+obiekt = NazwaKlasy("wartość1", "wartość2")
+obiekt.metoda()             # Wywołanie metody klasy
+```
+
+### Dziedziczenie klas
+Python pozwala na tworzenie nowych klas na podstawie istniejących (tzw. dziedziczenie).
+```py
+class PochodnaKlasa(NazwaKlasy):
+    def nowa_metoda(self):
+        print("Nowa funkcja w klasie pochodnej")
+```
+Obiekt klasy `PochodnaKlasa` będzie miał zarówno metody swojej klasy, jak i odziedziczone metody z `NazwaKlasy`.
+
+### Modyfikowanie metod (`super()`)
+Aby wywołać metodę klasy nadrzędnej w klasie potomnej należy użyć metody `super()`. 
+```py
+class PochodnaKlasa(NazwaKlasy):
+    def __init__(self, parametr1, parametr2, dodatkowy):
+        super().__init__(parametr1, parametr2)
+        self.dodatkowy = dodatkowy
+```
+Funkcja `super()` odwołuje się do klasy nadrzędnej i pozwala na używanie jej metod.
+
+### Metody specjalne (dunder methods)
+Python posiada wbudowane metody specjalne, które umożliwiają dostosowanie zachowania obiektów. Najczęściej stosowane to:
+- `__init__` – konstruktor
+- `__str__` – reprezentacja tekstowa obiektu
+- `__len__` – implementacja len()
+- `__add__` – obsługa + dla obiektów
+
+```py
+class Przedmiot:
+    def __init__(self, nazwa, waga):
+        self.nazwa = nazwa
+        self.waga = waga
+
+    def __str__(self):
+        return f"Przedmiot: {self.nazwa}, Waga: {self.waga} kg"
+
+p = Przedmiot("Miecz", 3)
+print(p)  # Wywoła __str__()
+```
+
+### Własności (`@property`)
+Python pozwala na tworzenie atrybutów tylko do odczytu.
+```py
+class Postac:
+    def __init__(self, imie, poziom):
+        self._poziom = poziom  # Konwencja: "_" oznacza atrybut "prywatny"
+
+    @property
+    def poziom(self):
+        return self._poziom  # Zwraca wartość atrybutu
+```
+Dzięki `@property`, poziom można odczytać, ale nie można go zmieniać.
+
 
 
 <h1 align="center" span style="color: lime">Curses w Pyhonie</h1>
