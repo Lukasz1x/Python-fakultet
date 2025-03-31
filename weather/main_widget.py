@@ -23,7 +23,7 @@ class MainWidget(QWidget):  # dziedziczenie po QWidget
             self._on_city_clicked)  # po kliknięciu na miasto z listy wyników wywołujemy metodę _on_city_clicked()
 
         layout = QGridLayout(self)  # tworzymy interfejs i jego układ
-        layout.addWidget(self.edit, 0, 0, 1, 1)  # addWidget(element, row, column, rowSpan, columnSpan[, alignment=0])
+        layout.addWidget(self.edit, 0, 0, 1, 1)  # addWidget(element, row, column, rowSpan, columnSpan, [alignment=0])
         layout.addWidget(self.button, 0, 1, 1, 1)
         layout.addWidget(self.city_list, 1, 0, 1, 2)
         layout.addWidget(self.label, 2, 0, 1, 2)
