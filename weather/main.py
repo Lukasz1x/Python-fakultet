@@ -5,6 +5,10 @@ from main_widget import MainWidget
 
 def main ():
     app = QApplication()    # tworzymy instancję aplikacji QApplication
+
+    QApplication.setOrganizationName("UMCS")
+    QApplication.setApplicationName("Pogoda")
+
     widget = MainWidget()   # tworzymy obiekt MainWidget, który jest głównym oknem aplikacji
     widget.show()           # wyświetlamy okno, bo domyślnie jest ukryte
     return app.exec()       # uruchamia główną pętlę zdarzeń
