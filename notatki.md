@@ -17,10 +17,18 @@
 4. [Kolory w curses](#kolory-w-curses)
 5. [Obsługa myszy w curses](#obsługa-myszy-w-curses)
 
+## Matplotlib w Pythonie
+1. [Tworzenie wykresów i figur](#tworzenie-wykresów-i-figur)
+2. [Rysowanie danych](#rysowanie-danych)
+3. [Formatowanie i stylizacja wykresów](#formatowanie-i-stylizacja-wykresów)
+4. [Zapisywanie wykresu do pliku](#zapisywanie-wykresu-do-pliku)
+5. [Interakcja z użytkownikiem](#interakcja-z-użytkownikiem)
+
 ## Linki:
 
-https://doc.qt.io/qtforpython-6/PySide6/QtWidgets/index.html#module-PySide6.QtWidgets
- https://requests.readthedocs.io/en/latest/user/quickstart/
+https://doc.qt.io/qtforpython-6/PySide6/QtWidgets/index.html#module-PySide6.QtWidgets \
+https://requests.readthedocs.io/en/latest/user/quickstart/ \
+https://matplotlib.org/3.5.3/api/_as_gen/matplotlib.pyplot.html
 
 
 <h1 align="center" span style="color: lime">Podstawy Pythona</h1>
@@ -897,3 +905,492 @@ if __name__ == '__main__':
 `curses.getmouse()` – zwraca (id_kliknięcia, x, y, z, bstate), gdzie bstate określa rodzaj zdarzenia.\
 `curses.BUTTON1_PRESSED`, `BUTTON3_PRESSED`, `BUTTON4_PRESSED` itd. - pozwalają rozpoznać, który przycisk został naciśnięty.\
 `stdscr.addstr(y, x, "X")` – rysuje znak X w miejscu kliknięcia.
+
+
+<h1 align="center" span style="color: lime">Matplotlib w Pythonie</h1>
+
+## Tworzenie wykresów i figur
+
+### 1. `plt.subplots()`
+**Opis:**\
+Tworzy nową figurę (`Figure`) oraz zestaw osi (`Axes`). Umożliwia łatwe tworzenie układów wielopodziałowych (`subplots`).\
+**Składnia:**
+```py
+fig, ax = plt.subplots(nrows=1, ncols=1, sharex=False, sharey=False,
+                       squeeze=True, subplot_kw=None, gridspec_kw=None,
+                       **fig_kw)
+```
+Parametry:
+- `nrows`, `ncols` (int): liczba wierszy i kolumn w układzie subplots.
+- `sharex`, `sharey` (bool lub {'row', 'col', 'all', 'none'}): określa, czy osie X i Y mają być współdzielone między subplotami.
+- `squeeze` (bool): jeśli True, zwraca obiekt Axes zamiast tablicy, gdy jest tylko jeden subplot.
+- `subplot_kw` (dict): dodatkowe argumenty przekazywane do każdej osi (Axes).
+- `gridspec_kw` (dict): dodatkowe argumenty przekazywane do GridSpec.
+- `**fig_kw`: dodatkowe argumenty przekazywane do `figure()`.
+
+**Przykład:**
+```py
+fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(10, 8), dpi=100)
+```
+### 2. `plt.figure()`
+**Opis:**\
+Tworzy nową figurę (`Figure`) lub aktywuje istniejącą.\
+**Składnia:**
+```py
+fig = plt.figure(num=None, figsize=None, dpi=None, facecolor=None,
+                 edgecolor=None, frameon=True, FigureClass=<class 'matplotlib.figure.Figure'>,
+                 clear=False, tight_layout=False, constrained_layout=False)
+```
+**Parametry:**
+- `num` (int lub str): identyfikator figury; jeśli figura o podanym numerze istnieje, zostanie aktywowana.
+- `figsize` (tuple): rozmiar figury w calach (szerokość, wysokość).
+- `dpi` (int): rozdzielczość figury w punktach na cal.
+- `facecolor`, `edgecolor` (str lub kolor): kolor tła i krawędzi figury.
+- `frameon` (bool): czy rysować ramkę wokół figury.
+- `clear` (bool): czy wyczyścić istniejącą figurę o podanym numerze.
+
+**Przykład:**
+```py
+fig = plt.figure(figsize=(8, 6), dpi=100, facecolor='white')
+```
+### 3. plt.show()
+**Opis:**\
+Wyświetla wszystkie otwarte figury. W środowiskach interaktywnych (np. Jupyter Notebook) może nie być konieczne.
+
+**Składnia:**
+```py
+plt.show(block=True)
+```
+**Parametry:**
+
+- `block` (bool): jeśli True, blokuje wykonanie kodu do momentu zamknięcia wszystkich figur.
+
+**Przykład:**
+```py
+plt.show()
+```
+### 4. `fig.canvas.mpl_connect()`
+**Opis:**\
+Rejestruje funkcję obsługi zdarzeń (np. kliknięć, naciśnięć klawiszy) dla figury.
+
+**Składnia:**
+```py
+cid = fig.canvas.mpl_connect(event, callback)
+```
+**Parametry:**
+- `event` (str): nazwa zdarzenia, np. 'button_press_event', 'key_press_event'.
+- `callback` (funkcja): funkcja wywoływana po wystąpieniu zdarzenia.
+
+**Przykład:**
+```py
+def on_click(event):
+    print(f"Kliknięto w punkcie: ({event.xdata}, {event.ydata})")
+
+cid = fig.canvas.mpl_connect('button_press_event', on_click)
+```
+### 5. `fig.canvas.draw()`
+**Opis:**\
+Rysuje lub odświeża figurę. Przydatne po dokonaniu zmian w danych lub wyglądzie wykresu.
+
+**Składnia:**
+```py
+fig.canvas.draw()
+```
+**Przykład:**
+```py
+# Po aktualizacji danych na wykresie
+fig.canvas.draw()
+```
+
+## Rysowanie danych
+### 1. `ax.plot()`
+**Opis:**\
+Rysuje wykres liniowy, łącząc kolejne punkty prostymi liniami. Bardzo uniwersalna metoda do prezentacji danych czasowych, zmian temperatury itp.
+
+**Składnia:**
+```py
+ax.plot(x, y, fmt='', data=None, **kwargs)
+```
+**Parametry:**
+- `x`, `y`: dane na osie X i Y.
+- `fmt` (str): skrócona notacja stylu linii i punktów (np. "ro" – czerwone kropki).
+- `label` (str): etykieta serii danych (używana w legendzie).
+- `color` (str): kolor linii (np. 'red', '#ff0000').
+- `linewidth` (float): grubość linii.
+- `linestyle` (str): styl linii ('-', '--', ':', '-.').
+
+**Przykład:**
+```py
+ax.plot(godziny, temperatury, label="Temperatura", color="red", linewidth=2)
+```
+### 2. `ax.bar()`
+**Opis:**\
+Tworzy wykres słupkowy (kolumnowy). Używany np. do wizualizacji opadów.
+
+**Składnia:**
+```py
+ax.bar(x, height, width=0.8, bottom=None, align='center', **kwargs)
+```
+**Parametry:**
+- `x`: pozycje słupków na osi X.
+- `height`: wysokość każdego słupka (czyli wartość na osi Y).
+- `width`: szerokość słupków.
+- `color`, label, alpha itd. — typowe właściwości wykresu.
+
+**Przykład:**
+```py
+ax.bar(dni, opady, color='blue', label='Opady')
+```
+### 3. `ax.scatter()`
+**Opis:**\
+Tworzy wykres punktowy (rozrzutu), często z kolorowaniem punktów w zależności od wartości (np. temperatura w miastach).
+
+**Składnia:**
+```py
+sc = ax.scatter(x, y, c=None, s=None, cmap=None, alpha=None, **kwargs)
+```
+**Parametry:**
+- `x`, `y`: współrzędne punktów.
+- `c`: kolory (np. lista temperatur).
+- `s`: wielkość punktów.
+- `cmap`: nazwa mapy kolorów (np. 'Spectral_r').
+- `alpha`: przezroczystość punktów.
+
+**Przykład:**
+```py
+sc = ax.scatter(longitudes, latitudes, c=temperatures, cmap="Spectral_r")
+```
+### 4. `ax.text()`
+**Opis:**\
+Umieszcza tekst w danym punkcie wykresu (np. etykiety miast).
+
+**Składnia:**
+```py
+ax.text(x, y, s, fontsize=None, bbox=None, ha='left', va='bottom', **kwargs)
+```
+**Parametry:**
+- `x`, `y`: pozycja tekstu.
+- `s`: tekst do wyświetlenia.
+- `fontsize`: rozmiar czcionki.
+- `bbox`: ramka wokół tekstu — słownik ze stylami np.:
+    ```py
+    bbox=dict(boxstyle="round", fc="white", alpha=0.5)
+    ```
+- `ha`, `va`: wyrównanie poziome i pionowe (`'center'`, `'left'`, `'top'`, itd.).
+**Przykład:**
+```py
+ax.text(21.0122, 52.2297, "Warszawa\n15°C", ha='center',
+        bbox=dict(boxstyle="round,pad=0.2", fc="white", alpha=0.3))
+```
+### 5. `ax.axvspan()`
+**Opis:**\
+Rysuje pionowy, wypełniony prostokąt (obszar między xmin a xmax) — np. dla oznaczenia zakresu czasu, nocy, dnia itd.
+
+**Składnia:**
+```py
+ax.axvspan(xmin, xmax, ymin=0, ymax=1, facecolor='blue', alpha=0.2)
+```
+**Parametry:**
+- `xmin`, `xmax`: granice prostokąta na osi X.
+- `ymin`, `ymax`: pionowe ograniczenia (domyślnie cała wysokość wykresu).
+- `facecolor`: kolor wypełnienia.
+- `alpha`: przezroczystość.
+
+**Przykład:**
+```py
+ax.axvspan(start_hour, end_hour, facecolor='gray', alpha=0.2)
+```
+### 6. `fig.colorbar()`
+**Opis:**\
+Dodaje legendę kolorów (np. dla wykresu punktowego). Automatycznie pokazuje zakres wartości przypisanych do kolorów.
+
+**Składnia:**
+```py
+fig.colorbar(mappable, ax=None, orientation='vertical', label='')
+```
+**Parametry:**
+- `mappable`: obiekt wykresu zawierający dane kolorów, np. wynik ax.scatter().
+- `ax`: oś, do której ma być przypisana legenda.
+- `orientation`: 'vertical' lub 'horizontal'.
+- `label`: podpis pod skalą.
+
+**Przykład:**
+```py
+sc = ax.scatter(x, y, c=temps, cmap="coolwarm")
+fig.colorbar(sc, ax=ax, label="Temperatura [°C]")
+```
+### 7. `ax.clear()`
+**Opis:**\
+Usuwa wszystkie elementy z osi (wykresy, teksty, siatki, legendy itd.). Oś pozostaje aktywna i gotowa do ponownego rysowania\
+**Parametry:**\
+Nie przyjmuje żadnych parametrów.\
+**Przykład:**
+```py
+ax.clear()
+```
+#### Inne powiązane metody
+Metoda	|Opis
+--|--
+`ax.cla()`|	To to samo co clear() (synonim — starsza wersja)
+`fig.clf()`|	Czyści całą figurę (czyli wszystkie osie w niej zawarte)
+`plt.cla()`|	Czyści aktywną oś
+`plt.clf()`|	Czyści aktywną figurę
+## Formatowanie i stylizacja wykresów
+### 1. `ax.grid()`
+**Opis:**\
+Włącza siatkę pomocniczą (linie poziome i/lub pionowe) w tle wykresu — ułatwia odczyt wartości.
+
+**Składnia:**
+```py
+ax.grid(visible=True, which='major', axis='both', linestyle='-', color='gray', alpha=0.5)
+```
+**Parametry:**
+- `visible` (bool): czy siatka ma być widoczna.
+- `which`: 'major', 'minor' lub 'both' — wybór typu podziałki.
+- `axis`: 'x', 'y' lub 'both'.
+- `linestyle`: styl linii (np. '--', ':').
+- `color`: kolor linii siatki.
+- `alpha`: przezroczystość.
+
+**Przykład:**
+```py
+ax.grid(True)
+```
+### 2. `ax.set_xlabel()` i `ax.set_ylabel()`
+**Opis:**\
+Ustawiają etykiety osi X i Y.
+
+**Składnia:**
+```py
+ax.set_xlabel("Czas [godziny]", fontsize=12)
+ax.set_ylabel("Temperatura [°C]", fontsize=12)
+```
+**Parametry:**
+- `label` (str): tekst etykiety.
+- `fontsize` (int): rozmiar czcionki.
+- `labelpad` (float): odstęp od osi.
+
+**Przykład:**
+```py
+ax.set_xlabel("Godzina")
+ax.set_ylabel("Temperatura [°C]")
+```
+### 3. `ax.legend()`
+**Opis:**\
+Dodaje legendę opisującą serie danych (np. linie na wykresie).
+
+**Składnia:**
+```py
+ax.legend(loc='upper right', title='Legenda', fontsize=10)
+```
+**Parametry:**
+- `loc`: pozycja legendy (np. 'upper left', 'lower right').
+- `title`: tytuł legendy.
+- `fontsize`: rozmiar czcionki.
+
+***Uwaga:*** Wymaga, aby przy `plot()` lub `bar()` przekazano `label=....`
+
+**Przykład:**
+```py
+ax.plot(x, y, label="Temperatura")
+ax.legend()
+```
+### 4. `ax.tick_params()`
+Opis:
+Umożliwia ustawienie stylu etykiet i znaczników osi (np. rotacja etykiet na osi X).
+
+**Składnia:**
+```py
+ax.tick_params(axis='x', labelrotation=45)
+```
+**Parametry:**
+- `axis`: 'x', 'y', 'both'.
+- `labelrotation`: obrót etykiet (w stopniach).
+- `labelsize`: rozmiar etykiet.
+- `length`: długość znaczników.
+- `width`: grubość znaczników.
+
+**Przykład:**
+```py
+ax.tick_params(axis="x", labelrotation=45)
+```
+### 5. `plt.title()`
+**Opis:**
+Dodaje tytuł nad całym wykresem.
+
+**Składnia:**
+```py
+plt.title("Tygodniowa prognoza pogody", fontsize=14)
+```
+**Parametry:**
+- `label` (str): tekst tytułu.
+- `fontsize` (int): rozmiar czcionki.
+- `loc`: pozycja ('center', 'left', 'right').
+
+***Uwaga:*** `plt.title()` działa tylko wtedy, gdy tworzymy pojedynczy wykres (jeden Axes), a nie układ subplotów. Gdy mamy wiele wykresów, tytuł powinien być ustawiony globalnie dla całej figury, a nie pojedynczego wykresu, więc należy użyć `plt.suptitle()`.
+
+**Przykład:**
+```py
+plt.title("Temperatura w Warszawie")
+```
+### 6. `plt.tight_layout()`
+**Opis:**\
+Automatycznie dopasowuje rozmieszczenie elementów figury, tak by nie nachodziły na siebie (np. etykiety osi i tytuły).
+
+**Składnia:**
+```py
+plt.tight_layout(pad=1.0)
+```
+**Parametry:**
+- `pad` (float): odstęp między wykresami.
+- `h_pad`, `w_pad`: odstępy w pionie/poziomie.
+- `rect`: ograniczenie do fragmentu figury.
+
+**Przykład:**
+```py
+plt.tight_layout()
+```
+### 7. `fig.set_label()`
+**Opis:**\
+Ustawia etykietę (opis tekstowy) obiektu Figure. W Twoim kodzie używane do oznaczenia klikniętego miasta — choć nie wyświetla się domyślnie na wykresie.
+
+**Składnia:**
+```py
+fig.set_label("Warszawa")
+```
+**Zastosowanie:**
+Można wykorzystać w integracji z GUI lub logiką wewnętrzną aplikacji do identyfikacji figury.
+
+**Przykład:**
+```py
+self.fig.set_label(city[0])  # np. "Poznań"
+```
+W Twoim kodzie używane do zapisania klikniętej nazwy miasta — można to potem odczytać przez `fig.get_label()`
+## Zapisywanie wykresu do pliku 
+### `fig.savefig()`
+**Opis:**\
+Metoda `savefig()` zapisuje obiekt Figure (czyli cały wykres, włącznie z osiami, legendą, tytułami itd.) do pliku graficznego lub wektorowego (np. PNG, JPG, PDF, SVG, EPS).
+**Składnia:**
+```py
+fig.savefig(fname, dpi=None, facecolor='w', edgecolor='w',
+            orientation='portrait', format=None,
+            transparent=False, bbox_inches=None,
+            pad_inches=0.1, metadata=None)
+```
+Parametry:
+Parametr	|Typ|	Opis
+--|--|--
+`fname`	|`str` lub `Path` lub `file-like`	|Nazwa pliku lub obiekt plikowy, np. `"wykres.png"`
+`dpi`	|`int`	|Rozdzielczość zapisu w dpi (np. 300 dla druku)
+`format`|	`str`|	Format pliku, np. 'png', 'pdf', 'svg' (domyślnie odczytywany z rozszerzenia pliku)
+`transparent`|	`bool`|	Czy tło ma być przezroczyste
+`facecolor`|	`str` lub `tuple`|	Kolor tła wykresu
+`edgecolor`|	`str` lub `tuple`|	Kolor ramki
+`bbox_inches`|	`'tight'` lub `None`|	Dopasowanie rozmiaru figury do zawartości (użyteczne np. dla etykiet)
+`pad_inches`|	`float`	|Margines wokół wykresu (działa z `bbox_inches='tight'`)
+`metadata`|	`dict`	|Dane dodatkowe zapisane w pliku (np. autor, tytuł, opis — dla PDF/SVG)
+ 
+**Przykłady użycia:**
+- Zapis domyślny (do PNG):
+    ```py
+    fig.savefig("mapa_polski.png")
+    ```
+-  Z większą rozdzielczością i przezroczystym tłem:
+    ```py
+    fig.savefig("wykres_temp.png", dpi=300, transparent=True)
+    ```
+- Automatyczne dopasowanie rozmiaru do zawartości:
+    ```py
+    fig.savefig("wykres_temp.png", bbox_inches='tight')
+    ```
+- Zapis do formatu wektorowego (np. PDF):
+    ```py
+    fig.savefig("raport.pdf", format="pdf")
+    ```
+
+Uwagi:
+- Jeśli nie podasz dpi, używana jest domyślna wartość z konfiguracji matplotlib (np. 100).
+- Funkcja nie wyświetla wykresu — tylko zapisuje go do pliku.
+- Aby zapisać aktualnie aktywną figurę bez odwoływania się do obiektu fig, można też użyć:
+    ```py
+    plt.savefig("plik.png")
+    ```
+
+## Interakcja z użytkownikiem
+### 1. `fig.canvas.mpl_connect(event, callback)`
+**Opis:**
+Rejestruje zdarzenie (np. kliknięcie myszą, naciśnięcie klawisza) i przypisuje mu funkcję obsługi, czyli tzw. callback.
+**Parametry:**
+- `event` (str) - Nazwa zdarzenia (np. 'button_press_event', 'motion_notify_event', 'key_press_event')
+- `callback` (callable) - Funkcja, która zostanie wywołana, gdy zdarzenie wystąpi (musi przyjmować jeden argument: `event`)
+
+**Zwraca:**
+- `int` — identyfikator zdarzenia, który można potem użyć do usunięcia za pomocą mpl_disconnect().
+
+**Przykład:**
+```py
+cid = fig.canvas.mpl_connect('button_press_event', self.onclick)
+```
+To spowoduje, że kliknięcie myszą uruchomi metodę `self.onclick(event)`.
+
+Zdarzenia dostępne w `mpl_connect()`:
+Nazwa zdarzenia|	Opis
+--|--
+`'button_press_event'`|	Kliknięcie myszą
+`'button_release_event'`|	Zwolnienie przycisku myszy
+`'motion_notify_event'`|	Ruch kursora myszy
+`'scroll_event'`|	Ruch kółka myszy
+`'key_press_event'`|	Naciśnięcie klawisza
+`'resize_event'`|	Zmiana rozmiaru figury
+`'close_event'`|	Zamknięcie figury
+
+### 2. `fig.canvas.draw()`
+**Opis:**\
+Odświeża zawartość całej figury. Przydatne po wprowadzeniu zmian na wykresie (np. dodaniu nowego wykresu, zmiany koloru, etykiety, itp.).
+**Parametry:**\
+Nie przyjmuje parametrów.\
+**Przykład**
+```py
+self.fig.canvas.draw()
+```
+
+### Przykładowy kody wykorzystujący wiele powyższych funkcji:
+```py
+import matplotlib.pyplot as plt
+import PySide6
+
+def main():
+
+    x = [3, 4, 7]
+    y = [5, 3, 1]
+    fig, ((ax1, ax2),
+          (ax3, ax4)) = plt.subplots(nrows=2, ncols=2, figsize=(10, 8), dpi=100)
+
+    sc = ax1.scatter(x, y, c=x, cmap="Spectral_r")
+    fig.colorbar(sc, ax=ax1, label="Temperatura [°C]")
+    ax1.legend(loc='upper right', title='Legenda', fontsize=10)
+
+    ax2.plot(x, y, label="COS")
+    ax2.legend()
+    ax2.grid()
+    ax2.tick_params(axis="x", labelrotation=45)
+
+    ax3.bar(x, y, color='blue', label='Opady')
+    ax3.set_xlabel("Czas [godziny]", fontsize=12)
+
+    ax4.scatter(x, y, c=x, cmap="Spectral_r")
+    ax4.set_ylabel("Temperatura [°C]", fontsize=12)
+    ax4.clear()
+
+    fig.set_label("Warszawa")
+    print(fig.get_label())
+
+    plt.suptitle("title")
+    plt.tight_layout()
+    plt.show()
+
+if __name__ == '__main__':
+    main()
+```
+### Wynik powyższego kodu:
+![figury](figury.png)
