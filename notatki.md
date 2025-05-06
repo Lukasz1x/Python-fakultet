@@ -1364,30 +1364,30 @@ def main():
     x = [3, 4, 7]
     y = [5, 3, 1]
     fig, ((ax1, ax2),
-          (ax3, ax4)) = plt.subplots(nrows=2, ncols=2, figsize=(10, 8), dpi=100)
+          (ax3, ax4)) = plt.subplots(nrows=2, ncols=2, figsize=(10, 8), dpi=100)    # tworzy nową figurę (obiekt główny) oraz zestaw osi (`Axes`)
 
-    sc = ax1.scatter(x, y, c=x, cmap="Spectral_r")
-    fig.colorbar(sc, ax=ax1, label="Temperatura [°C]")
-    ax1.legend(loc='upper right', title='Legenda', fontsize=10)
+    sc = ax1.scatter(x, y, c=x, cmap="Spectral_r")                                  # tworzy wykres punktowy, z mapowaniem danych na skalę kolorów
+    fig.colorbar(sc, ax=ax1, label="Temperatura [°C]")                              # tworzy pasek-legendę do kolorów wykresu punktowego
+    ax1.legend(loc='upper right', title='Legenda', fontsize=10)                     # specyfikuje pole legendy na wykresie
 
-    ax2.plot(x, y, label="COS")
-    ax2.legend()
-    ax2.grid()
-    ax2.tick_params(axis="x", labelrotation=45)
+    ax2.plot(x, y, label="COS")                                                     # tworzy wykres liniowy (jedna linia) i etykietuje jego przebieg (tę linię)
+    ax2.legend()                                                                    # tworzy legendę na podstawie etykiet wykresu liniowego
+    ax2.grid()                                                                      # włącza siatkę (kratki) na wykresie
+    ax2.tick_params(axis="x", labelrotation=45)                                     # ustawia etykiety na wybranej osi pod wybranym kątem
 
-    ax3.bar(x, y, color='blue', label='Opady')
-    ax3.set_xlabel("Czas [godziny]", fontsize=12)
+    ax3.bar(x, y, color='blue', label='Opady')                                      # tworzy wykres słupkowy
+    ax3.set_xlabel("Czas [godziny]", fontsize=12)                                   # ustawia etykietę osi X
 
-    ax4.scatter(x, y, c=x, cmap="Spectral_r")
-    ax4.set_ylabel("Temperatura [°C]", fontsize=12)
-    ax4.clear()
+    ax4.scatter(x, y, c=x, cmap="Spectral_r")                                       # tworzy wykres punktowy, z mapowaniem danych na skalę kolorów
+    ax4.set_ylabel("Temperatura [°C]", fontsize=12)                                 # ustawia etykietę osi Y
+    ax4.clear()                                                                     # czyści zawartość wykresu
 
-    fig.set_label("Warszawa")
-    print(fig.get_label())
+    fig.set_label("Warszawa")                                                       # nadaje etykietę wykresowi, jest to funkcja bez efektu wizualnego
+    print(fig.get_label())                                                          # zwraca "Warszawa" - te dwie funkcje są przydatne do debugu
 
-    plt.suptitle("title")
-    plt.tight_layout()
-    plt.show()
+    plt.suptitle("title")                                                           # ustawia tytuł dla całego głównego okna
+    plt.tight_layout()                                                              # automatycznie dopasowuje rozmieszczenie elementów figury, marginesów itd.
+    plt.show()                                                                      # pokazuje całość okna
 
 if __name__ == '__main__':
     main()
