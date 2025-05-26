@@ -1394,3 +1394,641 @@ if __name__ == '__main__':
 ```
 ### Wynik powyższego kodu:
 ![figury](figury.png)
+
+<h1 align="center" span style="color: lime">NumPy w Pythonie</h1>
+
+## 🧱 Tworzenie tablic – opis funkcji
+### 1. `np.array(...)`
+Składnia:
+```py
+np.array(object, dtype=None)
+```
+Opis:\
+Tworzy tablicę NumPy z listy, krotki lub innego obiektu iterowalnego. Można opcjonalnie określić typ danych (`dtype`).
+
+Przykład:
+```py
+a = np.array([1, 2, 3])
+# a = array([1, 2, 3])
+```
+### 2. `np.zeros(...)`
+Składnia:
+```py
+np.zeros(shape, dtype=float)
+```
+Opis:\
+Tworzy nową tablicę o podanym kształcie (`shape`), wypełnioną zerami. Domyślnie typ danych to `float64`.
+
+Przykład:
+```py
+z = np.zeros((2, 3), dtype=np.uint8)
+# z = array([[0, 0, 0], [0, 0, 0]], dtype=uint8)
+```
+### 3. `np.random.randint(...)`
+Składnia:
+```py
+np.random.randint(low, high=None, size=None, dtype=int)
+```
+Opis:\
+Zwraca losowe liczby całkowite z zakresu `[low, high)`. Jeśli `high` nie jest podane, zakres to `[0, low)`. Można określić rozmiar tablicy (`size`) i typ danych (`dtype`).
+
+Przykład:
+```py
+r = np.random.randint(0, 10, size=(2, 3), dtype=np.uint8)
+# np.array z losowymi liczbami 0–9
+```
+### 4. `np.random.normal(...)`
+Składnia:
+```py
+np.random.normal(loc=0.0, scale=1.0, size=None)
+```
+Opis:\
+Zwraca tablicę losowych liczb z rozkładu normalnego (Gaussa) o zadanej średniej (`loc`) i odchyleniu standardowym (`scale`).
+
+Przykład:
+```py
+n = np.random.normal(loc=100, scale=15, size=(3, 3))
+```
+### 5. `np.linspace(...)`
+Składnia:
+```py
+np.linspace(start, stop, num=50, dtype=None)
+```
+Opis:\
+Generuje num równo rozłożonych punktów między start a stop. Opcjonalnie można określić typ danych.
+
+Przykład:
+```py
+l = np.linspace(0, 1, 5)
+# array([0. , 0.25, 0.5 , 0.75, 1. ])
+```
+### 6. `np.tile(...)`
+Składnia:
+```py
+np.tile(A, reps)
+```
+Opis:\
+Powiela tablicę `A` wzdłuż zadanych osi. `reps` może być liczbą (ile razy powielić) lub krotką (jak wzdłuż każdej osi).
+
+Przykład:
+```py
+t = np.tile([1, 2], 3)
+# array([1, 2, 1, 2, 1, 2])
+```
+### 7. `np.meshgrid(...)`
+Składnia:
+```py
+np.meshgrid(x, y)
+```
+Opis:\
+Z dwóch wektorów 1D tworzy dwie tablice 2D reprezentujące siatkę współrzędnych. Używane np. w wizualizacji 2D i funkcjach falowych.
+
+Przykład:
+```py
+x = np.linspace(0, 1, 3)
+y = np.linspace(0, 1, 2)
+xx, yy = np.meshgrid(x, y)
+# xx = [[0. , 0.5, 1. ],
+#       [0. , 0.5, 1. ]]
+# yy = [[0., 0., 0.],
+#       [1., 1., 1.]]
+```
+### *8. `np.ones(...)`
+Składnia:
+```py
+np.ones(shape, dtype=float)
+```
+Opis:\
+Tworzy tablicę wypełnioną jedynkami.
+
+Przykład:
+```py
+o = np.ones((2, 2), dtype=np.uint8)
+```
+### *9. `np.eye(...)`
+Składnia:
+```py
+np.eye(N, M=None, k=0, dtype=float)
+```
+Opis:\
+Tworzy macierz jednostkową (1 na przekątnej, 0 poza nią). Jeśli `M` nie podane, to kwadratowa `N x N`.
+
+Przykład:
+```py
+i = np.eye(3)
+# array([[1., 0., 0.],
+#        [0., 1., 0.],
+#        [0., 0., 1.]])
+```
+### *10. `np.full(...)`
+Składnia:
+```py
+np.full(shape, fill_value, dtype=None)
+```
+Opis:\
+Tworzy tablicę zadanego rozmiaru, wypełnioną określoną wartością.
+
+Przykład:
+```py
+f = np.full((2, 2), 7)
+# array([[7, 7], [7, 7]])
+```
+
+## 🔧 Modyfikacja / przekształcenia danych
+### 1. `np.clip(...)`
+Składnia:
+```py
+np.clip(array, a_min, a_max)
+```
+Opis:\
+Ogranicza wartości w tablicy do zadanego przedziału. Wszystkie wartości mniejsze niż `a_min` są ustawiane na `a_min`, a większe niż `a_max` na `a_max`.
+
+Przykład:
+```py
+a = np.array([10, 200, 300])
+clipped = np.clip(a, 0, 255)
+# array([ 10, 200, 255])
+```
+### 2. `array.astype(...)`
+Składnia:
+```py
+array.astype(dtype)
+```
+Opis:\
+Zwraca nową tablicę z rzutowaniem danych na nowy typ. Nie modyfikuje oryginalnej tablicy.
+
+Przykład:
+```py
+a = np.array([1.5, 2.1, 3.9])
+b = a.astype(np.uint8)
+# array([1, 2, 3], dtype=uint8)
+```
+### 3. `array.copy()`
+Składnia:
+```py
+array.copy()
+```
+Opis:\
+Tworzy głęboką kopię tablicy NumPy. Użyteczne, gdy chcemy pracować na kopii bez wpływu na oryginał.
+
+Przykład:
+```py
+a = np.array([1, 2, 3])
+b = a.copy()
+b[0] = 100
+# a pozostaje bez zmian: [1, 2, 3]
+```
+### *4. `np.reshape(...)`
+Składnia:
+```py
+np.reshape(array, newshape)
+```
+Opis:\
+Zwraca widok tablicy o nowym kształcie (`newshape`). Liczba elementów musi się zgadzać.
+
+Przykład:
+```py
+a = np.array([1, 2, 3, 4])
+reshaped = np.reshape(a, (2, 2))
+# array([[1, 2], [3, 4]])
+```
+### *5. `np.ravel(...)`
+Składnia:
+```py
+np.ravel(array)
+```
+Opis:\
+Spłaszcza tablicę do jednowymiarowej bez kopiowania danych (jeśli możliwe).
+
+Przykład:
+```py
+a = np.array([[1, 2], [3, 4]])
+flat = np.ravel(a)
+# array([1, 2, 3, 4])
+```
+### *6. `np.transpose(...)` lub `array.T`
+Składnia:
+```py
+np.transpose(array)
+# lub
+array.T
+```
+Opis:\
+Zamienia osie tablicy – transpozycja (np. kolumny stają się wierszami). Przydatne w analizie macierzy i obrazów.
+
+Przykład:
+```py
+a = np.array([[1, 2], [3, 4]])
+t = a.T
+# array([[1, 3], [2, 4]])
+```
+### *7. `np.concatenate(...)`
+Składnia:
+```py
+np.concatenate((a1, a2, ...), axis=0)
+```
+Opis:\
+Łączy kilka tablic wzdłuż określonej osi (`axis`). Wszystkie muszą mieć zgodne rozmiary oprócz osi łączenia.
+
+Przykład:
+```py
+a = np.array([[1, 2]])
+b = np.array([[3, 4]])
+c = np.concatenate((a, b), axis=0)
+# array([[1, 2], [3, 4]])
+```
+### *8. `np.stack(...)`
+Składnia:
+```py
+np.stack((a1, a2, ...), axis=0)
+```
+Opis:
+Podobna do `concatenate`, ale dodaje nową oś. Przydatna np. do tworzenia stosu obrazów lub serii czasowych.
+
+Przykład:
+```py
+a = np.array([1, 2])
+b = np.array([3, 4])
+s = np.stack((a, b), axis=0)
+# array([[1, 2], [3, 4]])
+```
+
+## 📊 Operacje matematyczne
+
+### 1. `np.sin(...)`
+Składnia:
+```py
+np.sin(x)
+```
+Opis:\
+Zwraca sinus każdego elementu w tablicy `x`. Argumenty powinny być w radianach.
+
+Przykład:
+```py
+x = np.array([0, np.pi / 2, np.pi])
+np.sin(x)
+# array([0.0, 1.0, 0.0])
+```
+### 2. Operacje arytmetyczne na tablicach
+NumPy wspiera operacje wektorowe i macierzowe bez potrzeby pisania pętli. Oto przykłady:
+
+Odejmowanie od liczby:
+```py
+img = 255 - img
+```
+Opis: Odwraca kolory obrazu (inwersja). Każdy piksel `p` staje się `255 - p`.
+
+Mnożenie i dodawanie skalara:
+```py
+img2 = img * contrast + brightness
+```
+Opis: Zmiana kontrastu i jasności obrazu:
+- `*contrast` – zwiększa lub zmniejsza różnice między wartościami
+- `+brightness` – dodaje stałą wartość (rozjaśnienie/przyciemnienie)
+
+Uwaga:
+Jeśli wynik przekracza zakres `uint8`, może dojść do przepełnienia – dlatego często stosujemy:
+```py
+np.clip(img * c + b, 0, 255).astype(np.uint8)
+```
+### 3. Operatory porównania i maskowanie
+Przykład z kodu:
+```py
+img[img > 150] = 255
+img[img < 50] = 0
+```
+Opis:
+- `img > 150` tworzy maskę (tablicę `True`/`False`)
+- Następnie przypisanie wartości na podstawie tej maski
+
+Zastosowania: binaryzacja, progowanie obrazu, maskowanie danych.
+### *4. np.cos(...)
+Składnia:
+```py
+np.cos(x)
+```
+Opis: Kosinus każdego elementu.
+
+Przykład:
+```py 
+x = np.linspace(0, 2*np.pi, 4)
+np.cos(x)
+# array([ 1.0, 0.0, -1.0, 0.0])
+```
+### *5. `np.exp(...)`
+Składnia
+```py
+np.exp(x)
+```
+Opis: Oblicza wartość funkcji wykładniczej $e^x$ dla każdego elementu.
+
+Przykład:
+```py
+np.exp([0, 1])
+# array([1.0, 2.718...])
+```
+### *6. `np.log(...)` i `np.log10(...)`
+Składnia:
+```py
+np.log(x)     # log naturalny
+np.log10(x)   # log dziesiętny
+```
+Opis: Logarytmy elementów tablicy. Przydatne np. w analizie danych.
+
+Przykład:
+```py
+np.log([1, np.e])
+# array([0., 1.])
+```
+### *7. `np.mean(...)`, `np.std(...)`, `np.var(...)`
+Składnie:
+```py
+np.mean(array)
+np.std(array)
+np.var(array)
+```
+Opis:
+- `mean`: średnia
+- `std`: odchylenie standardowe
+- `var`: wariancja
+Przykład:
+```py
+a = np.array([1, 2, 3])
+np.mean(a)  # 2.0
+np.std(a)   # ≈ 0.816
+```
+### *8. `np.sum(...)`, `np.min(...)`, `np.max(...)`
+Składnie:
+```py 
+np.sum(array)
+np.min(array)
+np.max(array)
+```
+Opis: Sumowanie lub znajdowanie wartości minimalnej/maksymalnej.
+
+Przykład:
+```py
+a = np.array([1, 3, 5])
+np.sum(a)  # 9
+np.min(a)  # 1
+```
+
+<h1 align="center" span style="color: lime">OpenCv w Pythonie</h1>
+
+## 🎛️ Okna i suwaki (interfejs użytkownika)
+Funkcje z tej grupy pozwalają tworzyć interaktywne okna, suwaki i wyświetlać obrazy w czasie rzeczywistym. Są bardzo przydatne np. do testowania filtrów i regulacji parametrów.
+
+### 1. `cv2.namedWindow`
+Składnia:
+```py
+cv2.namedWindow(winname[, flags])
+```
+Opis:\
+Tworzy okno o nazwie `winname`, które może być później używane np. do wyświetlania obrazu (`imshow`) lub umieszczania suwaków (`createTrackbar`).
+
+Parametry:
+- `winname` – nazwa okna (łańcuch znaków).
+- `flags` (opcjonalne) – np. `cv2.WINDOW_NORMAL` (pozwala na skalowanie), `cv2.WINDOW_AUTOSIZE` (domyślne).
+
+Przykład:
+```py
+cv2.namedWindow("okno", cv2.WINDOW_NORMAL)
+```
+### 2. `cv2.createTrackbar`
+Składnia:
+```py
+cv2.createTrackbar(trackbarname, winname, value, count, onChange)
+```
+Opis:\ 
+Tworzy suwak (ang. trackbar) w określonym oknie. Możesz za jego pomocą dynamicznie kontrolować parametry (np. jasność, rozmycie) podczas działania programu.
+
+Parametry:
+- `trackbarname` – nazwa suwaka.
+- `winname` – nazwa okna, do którego suwak ma być dodany.
+- `value` – początkowa wartość suwaka.
+- `count` – maksymalna wartość suwaka.
+- `onChange` – funkcja, która zostanie wywołana przy każdej zmianie wartości. Jeśli nie jest potrzebna, można podać `lambda x: x`.
+
+Przykład:
+```py
+cv2.createTrackbar("jasność", "okno", 256, 512, lambda x: x)
+```
+### 3. `cv2.getTrackbarPos`
+Składnia:
+```py
+pos = cv2.getTrackbarPos(trackbarname, winname)
+```
+Opis:\
+Pobiera aktualną wartość suwaka utworzonego wcześniej za pomocą createTrackbar.
+
+Parametry:
+- `trackbarname` – nazwa suwaka.
+- `winname` – nazwa okna.
+
+Zwraca:
+Liczba całkowita – aktualna wartość pozycji suwaka.
+
+Przykład:
+```py
+jasnosc = cv2.getTrackbarPos("jasność", "okno") - 256
+```
+### 4. `cv2.imshow`
+Składnia:
+```py
+cv2.imshow(winname, mat)
+```
+Opis:\
+Wyświetla obraz (mat) w oknie o nazwie winname. Jeśli okno nie istnieje, zostanie utworzone automatycznie (domyślnie w trybie autosize).
+
+Parametry:
+- `winname` – nazwa okna.
+- `mat` – obraz (np. z `cv2.imread` lub `cam.read()`).
+
+Uwaga:\
+Obrazy muszą być w formacie BGR (dla kolorowych) lub jedno- lub trójkanałowe w przypadku szarości.
+
+Przykład:
+```py
+cv2.imshow("okno", frame)
+```
+### 5. `cv2.waitKey`
+Składnia:
+```py
+key = cv2.waitKey(delay)
+```
+Opis:\
+Czeka przez `delay` milisekund na naciśnięcie klawisza. Jeśli `delay` = 0, czeka w nieskończoność. Zwraca kod klawisza (ASCII) jako liczba całkowita.
+
+Zastosowanie:\
+Pozwala przerywać pętlę `while` np. po naciśnięciu `'q'`:
+
+Przykład:
+```py
+if cv2.waitKey(1) == ord('q'):
+    break
+```
+### *6. `cv2.destroyWindow` / `cv2.destroyAllWindows`
+Opis: Usuwają jedno lub wszystkie okna utworzone przez OpenCV.
+
+Przykład:
+```py
+cv2.destroyAllWindows()
+```
+### *7. `cv2.setTrackbarPos`
+Składnia:
+cv2.setTrackbarPos(trackbarname, winname, pos)
+Opis:
+Programowo zmienia wartość suwaka.
+
+Przykład:
+```py
+cv2.setTrackbarPos("jasność", "okno", 300)
+```
+
+## 🎥 Obsługa kamery – `cv2.VideoCapture`
+Funkcje te służą do otwierania strumienia z kamery, pobierania klatek i sprawdzania dostępności urządzenia. Używane w aplikacjach z wideo na żywo, np. do rozpoznawania twarzy, efektów w czasie rzeczywistym itp.
+
+### 1. `cv2.VideoCapture`
+Składnia:
+```py
+cap = cv2.VideoCapture(index)
+```
+Opis:\
+Tworzy obiekt do przechwytywania wideo z podanego źródła.
+- `index=0` oznacza pierwszą kamerę (zwykle domyślną).
+- Można również podać ścieżkę do pliku wideo (np. "video.mp4").
+
+Parametry:
+- index (int lub str) – numer kamery (0, 1, …) lub ścieżka do pliku wideo.
+
+Zwraca:
+Obiekt `VideoCapture`, używany do dalszych operacji.
+
+Przykład:
+```py
+cam = cv2.VideoCapture(0)
+```
+### 2. `cap.read()`
+Składnia:
+```py
+ret, frame = cap.read()
+```
+Opis:\
+Pobiera jedną klatkę z kamery lub pliku wideo.
+
+Zwraca:
+- `ret` (bool) – `True`, jeśli klatka została odczytana poprawnie.
+- `frame` – obraz z kamery (jako tablica NumPy).
+
+Przykład:
+```py
+ok, frame = cam.read()
+if not ok:
+    break
+```
+### 3. `cap.isOpened()`
+Składnia:
+```py
+cam.isOpened()
+```
+Opis:\
+Sprawdza, czy kamera (lub plik) została otwarta poprawnie.
+Przydatne do testowania, czy `VideoCapture` działa poprawnie przed pobieraniem klatek.
+
+Zwraca:
+`True`, jeśli źródło jest aktywne, `False` w przeciwnym razie.
+
+Przykład:
+```py
+if cam is not None and cam.isOpened():
+    # Kamera gotowa do pracy
+```
+### 4. `cap.release()`
+Składnia:
+```py
+cap.release()
+```
+Opis:\
+Zamyka kamerę lub plik wideo i zwalnia zasoby. Powinno się zawsze wywołać na końcu programu.
+
+Przykład:
+```py
+cam.release()
+```
+### *5. `cap.set(propId, value)`
+Opis: Ustawia parametry kamery (np. rozdzielczość, jasność).
+
+Przykład (ustawienie rozdzielczości kamery):
+```py
+cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+```
+### *6. `cap.get(propId)`
+Opis: Pobiera aktualne ustawienie parametru.
+
+Przykład:
+```py
+fps = cam.get(cv2.CAP_PROP_FPS)
+```
+## 🧊 Operacje na obrazie – modyfikacje i przekształcenia w OpenCV
+Te funkcje służą do modyfikowania obrazu: zmiany jasności, rozmycia, odbicia, modyfikacji koloru itp. Są wykorzystywane w przetwarzaniu obrazu, grafice komputerowej i widzeniu maszynowym.
+### 1. `cv2.add(src1, src2)`
+Składnia:
+```py
+dst = cv2.add(src1, src2)
+```
+Opis:
+Wykonuje dodawanie pikseli dwóch obrazów lub obrazu i wartości skalarnej.
+W przeciwieństwie do operatora `+`, `cv2.add()` wykonuje dodawanie z saturacją, tzn. wartości większe niż 255 zostają przycięte do 255 (dla typów uint8).
+
+Przykład (dodanie jasności):
+```py
+frame = cv2.add(frame, 50)  # Jasność +50
+```
+Uwaga:
+Można też dodać skalar `np.array([val,val,val])`, by zwiększyć wszystkie kanały.
+### 2. `cv2.flip(src, flipCode, dst=None)`
+Składnia:
+```py
+dst = cv2.flip(src, flipCode)
+```
+Opis:\
+Odbija obraz względem wybranej osi.
+- `flipCode = 0` – odbicie pionowe (góra-dół),
+- `flipCode > 0` – poziome (lewo-prawo),
+- `flipCode < 0` – odbicie względem obu osi.
+
+Przykład (odbicie lustrzane w poziomie):
+```py
+cv2.flip(frame, 1, frame)
+```
+Uwaga:\
+W kodzie obiekt `frame` jest odbijany „w miejscu” – to skrótowy zapis z wykorzystaniem trzeciego parametru (`dst`).
+### 3. `cv2.GaussianBlur(src, ksize, sigmaX)`
+Składnia:
+```py
+dst = cv2.GaussianBlur(src, (ksizeX, ksizeY), sigmaX)
+```
+Opis:\
+Nakłada rozmycie gaussowskie (naturalne, miękkie). Wygładza obraz, redukuje szumy.
+- `ksize` – rozmiar maski (musi być nieparzysty),
+- `sigmaX` – odchylenie standardowe rozmycia w poziomie.
+
+Przykład:
+```py
+blurred = cv2.GaussianBlur(frame, (11, 11), 0)
+```
+### 4. `cv2.medianBlur(src, ksize)`
+Składnia:
+```py
+dst = cv2.medianBlur(src, ksize)
+```
+Opis:\
+Filtr medianowy – używany do redukcji szumów typu "sól i pieprz".
+Każdy piksel zostaje zastąpiony medianą z otoczenia o zadanym rozmiarze.
+- `ksize` – rozmiar maski (musi być nieparzysty i > 1).
+
+Przykład:
+```py
+filtered = cv2.medianBlur(frame, 5)
+```
