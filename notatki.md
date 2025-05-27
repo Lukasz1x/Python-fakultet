@@ -24,11 +24,24 @@
 4. [Zapisywanie wykresu do pliku](#zapisywanie-wykresu-do-pliku)
 5. [Interakcja z użytkownikiem](#interakcja-z-użytkownikiem)
 
+## NumPy w Pythonie
+1. [Tworzenie tablic – opis funkcji](#-tworzenie-tablic--opis-funkcji)
+2. [Modyfikacja / przekształcenia danych](#-modyfikacja--przekształcenia-danych)
+3. [Operacje matematyczne](#-operacje-matematyczne)
+
+## OpenCv w Pythonie
+1. [Okna i suwaki (interfejs użytkownika)](#️-okna-i-suwaki-interfejs-użytkownika)
+2. [Obsługa kamery](#-obsługa-kamery--cv2videocapture)
+3. [Operacje na obrazie – modyfikacje i przekształcenia w OpenCV](#-operacje-na-obrazie--modyfikacje-i-przekształcenia-w-opencv)
+4. [GUI i interfejs użytkownika w OpenCV – okna, trackbary, obsługa klawiatury](#-gui-i-interfejs-użytkownika-w-opencv--okna-trackbary-obsługa-klawiatury)
+
 ## Linki:
 
 https://doc.qt.io/qtforpython-6/PySide6/QtWidgets/index.html#module-PySide6.QtWidgets \
 https://requests.readthedocs.io/en/latest/user/quickstart/ \
-https://matplotlib.org/3.5.3/api/_as_gen/matplotlib.pyplot.html
+https://matplotlib.org/3.5.3/api/_as_gen/matplotlib.pyplot.html \
+https://numpy.org/doc/stable/index.html \
+https://docs.opencv.org/4.x/
 
 
 <h1 align="center" span style="color: lime">Podstawy Pythona</h1>
@@ -1908,6 +1921,28 @@ Przykład:
 ```py
 cam = cv2.VideoCapture(0)
 ```
+#### 🔁Jak zapętlić odtwarzanie pliku .mp4 w OpenCV
+```py
+cam = cv2.VideoCapture("plik.mp4")
+
+while True:
+    ret, frame = cam.read()
+    
+    if not ret:
+        cam.set(cv2.CAP_PROP_POS_FRAMES, 0)  # wróć do 1. klatki
+        continue
+
+    cv2.imshow("okno", frame)
+    if cv2.waitKey(30) == ord('q'):
+        break
+
+cam.release()
+cv2.destroyAllWindows()
+```
+🔍 Szczegóły:
+- `cv2.CAP_PROP_POS_FRAMES` – indeks aktualnej klatki.
+- `cam.set(cv2.CAP_PROP_POS_FRAMES, 0)` – ustawia odczyt na klatkę nr 0 (czyli początek filmu).
+- `cv2.waitKey(30)` – opóźnienie ~30ms (czyli ok. 33 FPS; dostosuj do oryginalnego FPS filmu).
 ### 2. `cap.read()`
 Składnia:
 ```py
@@ -2031,4 +2066,125 @@ Każdy piksel zostaje zastąpiony medianą z otoczenia o zadanym rozmiarze.
 Przykład:
 ```py
 filtered = cv2.medianBlur(frame, 5)
+```
+### 5. `cv2.cvtColor(src, code)`
+Składnia:
+```py
+dst = cv2.cvtColor(src, code)
+```
+Opis:\
+Konwertuje obraz między przestrzeniami barw (np. BGR ⇄ HSV, RGB ⇄ GRAY itd.).
+- `code` to np. `cv2.COLOR_BGR2HSV`, `cv2.COLOR_HSV2BGR`, `cv2.COLOR_BGR2GRAY`, itd.
+
+Przykład: konwersja do HSV:
+```py
+hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+```
+Przykład: konwersja z powrotem:
+```py
+frame = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+```
+### 6. Operacje na kanałach kolorów – NumPy
+W kodzie był użyty dostęp bezpośredni do kanałów HSV:
+```py
+hue = frame[:, :, 0]
+frame[:, :, 0] = (hue + wartość) % 180
+```
+To podejście umożliwia modyfikację wybranego kanału (np. barwy) bez zmiany nasycenia czy jasności.
+
+### *7. `cv2.blur()` – zwykłe rozmycie (średnie)
+```py
+cv2.blur(frame, (5, 5))
+```
+Rozmycie, w którym każdy piksel to średnia wartość otaczających go pikseli.
+### *8. `cv2.bilateralFilter()` – rozmycie zachowujące krawędzie
+```py
+cv2.bilateralFilter(frame, 9, 75, 75)
+```
+Rozmywa tylko podobne kolory, zachowując ostre krawędzie.
+
+## 🧰 GUI i interfejs użytkownika w OpenCV – okna, trackbary, obsługa klawiatury
+
+### 1. `cv2.namedWindow(winname[, flags])`
+Składnia:
+```py
+cv2.namedWindow("okno")
+```
+Opis:\
+Tworzy nowe okno o nazwie `"okno"` – wymagane, jeśli chcesz dodać do niego np. suwak (trackbar).
+Bez tego `createTrackbar()` nie będzie działać.
+- `winname` – nazwa okna.
+- `flags` (opcjonalne) – styl okna (np. `cv2.WINDOW_NORMAL` – skalowalne, `cv2.WINDOW_AUTOSIZE` – domyślne).
+
+Przykład:
+```py
+cv2.namedWindow("okno", cv2.WINDOW_NORMAL)
+```
+### 2. cv2.createTrackbar(trackbarname, winname, value, count, onChange)
+Składnia:
+```py
+cv2.createTrackbar("jasność", "okno", 256, 511, lambda x: x)
+```
+Opis:\
+Tworzy suwak w oknie `winname` o nazwie `trackbarname`. Suwak ma wartości od `0` do `count`. Funkcja `onChange` jest wywoływana przy zmianie suwaka.
+- `value` – wartość początkowa,
+- `count` – maksymalna wartość,
+- `onChange` – funkcja wywoływana przy zmianie (tu: lambda x: x ignoruje zmianę, odczytujemy wartość ręcznie później).
+
+Przykład użycia z kamerą:
+```py
+cv2.createTrackbar("prog", "okno", 100, 255, lambda x: None)
+```
+### 3. `cv2.getTrackbarPos(trackbarname, winname)`
+Składnia:
+```py
+val = cv2.getTrackbarPos("jasność", "okno")
+```
+Opis:\
+Zwraca aktualną wartość suwaka (trackbara) o nazwie trackbarname w oknie winname.
+
+Przykład – odczyt wartości z suwaka:
+```py
+jasnosc = cv2.getTrackbarPos("jasność", "okno") - 256
+```
+### 4. `cv2.imshow(winname, mat)`
+Składnia:
+```py
+cv2.imshow("okno", obraz)
+```
+Opis:\
+Wyświetla obraz `mat` w oknie `winname`. Jeśli okno nie istnieje, zostanie automatycznie utworzone.
+
+Uwaga:
+Obraz musi być typu `uint8` lub `float32` i mieć odpowiedni zakres (np. [0,255]).
+### 5. `cv2.waitKey([delay])`
+Składnia:
+```py
+key = cv2.waitKey(1)
+```
+Opis:\
+Czeka `delay` milisekund na naciśnięcie klawisza. Jeśli naciśnięto – zwraca kod klawisza (`ord('q')`, `27` dla ESC), w przeciwnym razie zwraca `-1`.
+
+Przykład:
+```py
+if cv2.waitKey(1) == ord('q'):
+    break
+```
+Uwaga:\
+Bez `waitKey()` okna OpenCV się nie odświeżają! Musi być wywołane cyklicznie w pętli.
+### *6. `cv2.setMouseCallback(winname, onMouse)`
+Opis:
+Rejestruje funkcję obsługi zdarzeń myszy w oknie.
+```py
+def callback(event, x, y, flags, param):
+    if event == cv2.EVENT_LBUTTONDOWN:
+        print(f"Kliknięto w ({x},{y})")
+
+cv2.setMouseCallback("okno", callback)
+```
+### *7. cv2.putText()
+Opis:
+Rysuje tekst na obrazie (np. etykiety, debug info).
+```py
+cv2.putText(frame, "Jasnosc", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
 ```
